@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { gql, useMutation } from "@apollo/client"
+import { useRouter } from "next/navigation";
 
 const LOGIN = gql`mutation Login($username: String!, $password: String!) {
   login(authInput: {
@@ -14,14 +15,16 @@ const LOGIN = gql`mutation Login($username: String!, $password: String!) {
 
 export default function Login() {
   const [login, { loading, error }] = useMutation(LOGIN)
+  const router = useRouter();
 
-  async function onLogin(e) {
+  function onLogin(e) {
     e.preventDefault();
-    const data = new FormData(e.target);
-    const result = await login({
-      variables: { username: data.get("username"), password: data.get("password") },
+    const variables = Object.fromEntries(new FormData(e.target));
+    login({
+      variables,
       onCompleted: ({ login }) => {
         localStorage.setItem("access_token", login.access_token)
+        router.push("/")
       }
     })
   }

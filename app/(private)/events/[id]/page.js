@@ -15,7 +15,7 @@ const GET_EVENT = gql`query GetEvent($id: Int!) {
 export default function SingleEvent({ params }) {
   const { data } = useSuspenseQuery(GET_EVENT, { variables: { id: Number(params.id) } })
   return (
-    <div>
+    <div className="bg-white p-4 rounded-md space-y-5">
       <ul className="flex justify-between w-full">
         <li className="p-1.5 rounded-sm flex items-center space-x-2">
           <div className="bg-indigo-50 w-fit p-2.5 text-indigo-600 rounded-md">
@@ -51,22 +51,24 @@ export default function SingleEvent({ params }) {
           </div>
         </li>
       </ul>
-      <table className="w-full overflow-hidden mt-8 rounded-md">
-        <thead className="text-left text-gray-600 text-sm">
-          <tr>
-            <th className="font-medium p-2.5 bg-slate-50">
-              Username
-            </th>
-          </tr>
-        </thead>
-        <tbody className="text-sm divide-y divide-slate-200">
-          {data.event.participants.map((participant, i) => (
-            <tr key={i}>
-              <td className="font-medium p-2.5 text-gray-900">{participant.username}</td>
+      {data.event.participants.length ? (
+        <table className="w-full overflow-hidden mt-8 rounded-md">
+          <thead className="text-left text-gray-600 text-sm">
+            <tr>
+              <th className="font-medium p-2.5 bg-slate-50">
+                Username
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="text-sm divide-y divide-slate-200">
+            {data.event.participants.map((participant, i) => (
+              <tr key={i}>
+                <td className="font-medium p-2.5 text-gray-900">{participant.username}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ) : <p className="text-gray-600 text-sm">No participant registered yet</p>}
     </div>
   )
 }

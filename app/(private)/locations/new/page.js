@@ -14,20 +14,17 @@ export default function NewLocation() {
   const router = useRouter();
   const [createLocation, { loading }] = useMutation(CREATE_LOCATION, {
     refetchQueries: ["GetLocations"],
-    onCompleted: ({ createLocation }) => {
-      router.push(`/locations/${createLocation.id}`)
-    }
+    onCompleted: () => router.push("/locations")
   })
 
   function onNewLocation(e) {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(e.target));
     createLocation({ variables: { input: data } });
-    console.log(data)
   }
 
   return (
-    <div className="max-w-md py-8">
+    <div className="max-w-md p-4 bg-white rounded-md">
       <h2 className="text-xl font-semibold text-gray-900 leading-6">New location</h2>
       <form onSubmit={onNewLocation} className="space-y-4 mt-6 group">
         <div>

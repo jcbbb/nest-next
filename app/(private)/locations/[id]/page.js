@@ -1,5 +1,4 @@
 "use client"
-
 import { useMutation } from "@apollo/client"
 import { useSuspenseQuery } from "@apollo/client"
 import { gql } from "@apollo/client"
@@ -15,7 +14,9 @@ const GET_LOCATION = gql`query GetLocation($id: Int!) {
 
 const UPDATE_LOCATION = gql`mutation UpdateLocation($input: UpdateLocationInput!) {
   updateLocation(updateLocationInput: $input) {
-    id
+    id,
+    name,
+    address
   }
 }`
 
@@ -28,8 +29,19 @@ const DELETE_LOCATION = gql`mutation RemoveLocation($id: Int!) {
 export default function SingleLocation({ params }) {
   const router = useRouter();
   const { data } = useSuspenseQuery(GET_LOCATION, { variables: { id: Number(params.id) } })
-  const [updateLocation, { loading }] = useMutation(UPDATE_LOCATION, { refetchQueries: ["GetLocations"] })
-  const [deleteLocation] = useMutation(DELETE_LOCATION, { refetchQueries: ["GetLocations"] });
+  const [updateLocation, { loading }] = useMutation(UPDATE_LOCATION)
+  const [deleteLocation] = useMutation(DELETE_LOCATION, {
+    update(cache, { data: { removeLocation } }) {
+      cache.modify({
+        fields: {
+          locations(existingLocations = [], { readField }) {
+            return existingLocations.filter(item => removeLocation.id !== readField("id", item))
+          }
+        }
+      })
+    },
+    onCompleted: () => router.push("/locations"),
+  });
 
   function onSubmit(e) {
     e.preventDefault();
@@ -42,14 +54,13 @@ export default function SingleLocation({ params }) {
         break;
       case "delete":
         deleteLocation({ variables: { id: Number(data.id) } })
-        router.push("/locations")
         break;
       default:
         break
     }
   }
   return (
-    <div className="max-w-md py-8">
+    <div className="max-w-md bg-white p-4 rounded-md">
       <h2 className="text-xl font-semibold text-gray-900 leading-6">Edit {data.location.name}</h2>
       <form onSubmit={onSubmit} className="space-y-4 mt-6 group">
         <input type="hidden" name="id" value={data.location.id} />
