@@ -1,4 +1,4 @@
-export function toDateTimeLocal(date) {
+export function toDatetimeLocal(date) {
   let ten = (i) => (i < 10 ? '0' : '') + i,
     YYYY = date.getFullYear(),
     MM = ten(date.getMonth() + 1),

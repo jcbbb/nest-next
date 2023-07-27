@@ -3,7 +3,7 @@ import { useMutation } from "@apollo/client"
 import { useSuspenseQuery } from "@apollo/client"
 import { gql } from "@apollo/client"
 import { useRouter } from "next/navigation"
-import { toDateTimeLocal } from "@/utils/date";
+import { toDatetimeLocal } from "@/utils/date";
 
 const GET_EVENT = gql`query GetEvent($id: Int!) {
   event(id: $id) {
@@ -114,13 +114,13 @@ export default function EditEvent({ params }) {
         <div>
           <label htmlFor="start_at" className="block text-sm font-medium leading-6 text-gray-900">Start at</label>
           <div className="mt-2">
-            <input defaultValue={toDateTimeLocal(new Date(data.event.start_at))} disabled={loading} id="start_at" name="start_at" placeholder="Learn about JS and have fun" type="datetime-local" required className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:opacity-70 disabled:pointer-events-none" />
+            <input defaultValue={toDatetimeLocal(new Date(data.event.start_at))} disabled={loading} id="start_at" name="start_at" placeholder="Learn about JS and have fun" type="datetime-local" required className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:opacity-70 disabled:pointer-events-none" />
           </div>
         </div>
         <div>
           <label htmlFor="end_at" className="block text-sm font-medium leading-6 text-gray-900">End at</label>
           <div className="mt-2">
-            <input defaultValue={toDateTimeLocal(new Date(data.event.end_at))} disabled={loading} id="end_at" name="end_at" placeholder="Learn about JS and have fun" type="datetime-local" required className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:opacity-70 disabled:pointer-events-none" />
+            <input defaultValue={toDatetimeLocal(new Date(data.event.end_at))} disabled={loading} id="end_at" name="end_at" placeholder="Learn about JS and have fun" type="datetime-local" required className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 disabled:opacity-70 disabled:pointer-events-none" />
           </div>
         </div>
         <div className="flex space-x-4 col-span-2">

@@ -4,6 +4,7 @@ import { useMutation } from "@apollo/client"
 import { useSuspenseQuery } from "@apollo/client"
 import { gql } from "@apollo/client"
 import { useRouter } from "next/navigation"
+import { fromDatetimeLocal } from "@/utils/date";
 
 const GET_LOCATIONS = gql`query GetLocations {
   locations {
@@ -40,7 +41,16 @@ export default function NewEvent() {
   function onNewEvent(e) {
     e.preventDefault();
     const data = Object.fromEntries(new FormData(e.target));
-    createEvent({ variables: { input: Object.assign(data, { location_id: parseInt(data.location_id, 10) }) } })
+    createEvent({
+      variables: {
+        input: Object.assign(data, {
+          location_id: parseInt(data.location_id, 10),
+          start_at: new Date(data.start_at).toISOString(),
+          end_at: new Date(data.end_at).toISOString()
+        })
+      }
+    }
+    )
   }
 
   return (
