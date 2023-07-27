@@ -6,14 +6,24 @@ import { useRouter } from "next/navigation"
 
 const CREATE_LOCATION = gql`mutation CreateLocation($input: CreateLocationInput!) {
   createLocation(createLocationInput: $input) {
-    id
+    id,
+    name,
+    address
   }
 }`
 
 export default function NewLocation() {
   const router = useRouter();
   const [createLocation, { loading }] = useMutation(CREATE_LOCATION, {
-    refetchQueries: ["GetLocations"],
+    update(cache, { data: { createLocation } }) {
+      cache.modify({
+        fields: {
+          locations(existingLocations = [], { toReference }) {
+            return [...existingLocations, toReference(createLocation)]
+          }
+        }
+      })
+    },
     onCompleted: () => router.push("/locations")
   })
 
