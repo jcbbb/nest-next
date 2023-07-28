@@ -1,19 +1,46 @@
 "use client";
 import { useSuspenseQuery } from "@apollo/client";
 import { gql } from "@apollo/client"
+import { useEffect } from "react";
 
 const GET_EVENT = gql`query GetEvent($id: Int!) {
   event (id: $id) {
     start_at,
     end_at,
     participants {
+      id,
       username
     }
   }
 }`
 
+const PARTICIPANTS_SUBSCRIPTION = gql`subscription OnParticipantAdded($id: Int!) {
+  participantAdded(event: $id) {
+    id,
+    username
+  }
+}`
+
 export default function SingleEvent({ params }) {
-  const { data } = useSuspenseQuery(GET_EVENT, { variables: { id: Number(params.id) } })
+  const { data, subscribeToMore } = useSuspenseQuery(GET_EVENT, { variables: { id: Number(params.id) } })
+
+  useEffect(() => {
+    subscribeToMore({
+      document: PARTICIPANTS_SUBSCRIPTION,
+      variables: { id: Number(params.id) },
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev;
+        const newParticipant = subscriptionData.data.participantAdded;
+        return Object.assign({}, prev, {
+          event: {
+            ...prev.event,
+            participants: [newParticipant, ...prev.event.participants]
+          }
+        })
+      }
+    })
+  }, [params])
+
   return (
     <div className="bg-white p-4 rounded-md space-y-5">
       <ul className="flex justify-between w-full">
@@ -56,6 +83,9 @@ export default function SingleEvent({ params }) {
           <thead className="text-left text-gray-600 text-sm">
             <tr>
               <th className="font-medium p-2.5 bg-slate-50">
+                ID
+              </th>
+              <th className="font-medium p-2.5 bg-slate-50">
                 Username
               </th>
             </tr>
@@ -63,6 +93,7 @@ export default function SingleEvent({ params }) {
           <tbody className="text-sm divide-y divide-slate-200">
             {data.event.participants.map((participant, i) => (
               <tr key={i}>
+                <td className="font-medium p-2.5 text-gray-900">{participant.id}</td>
                 <td className="font-medium p-2.5 text-gray-900">{participant.username}</td>
               </tr>
             ))}
