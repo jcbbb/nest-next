@@ -9,7 +9,8 @@ const CREATE_LOCATION = gql`mutation CreateLocation($input: CreateLocationInput!
   createLocation(createLocationInput: $input) {
     id,
     name,
-    address
+    address,
+    status
   }
 }`
 

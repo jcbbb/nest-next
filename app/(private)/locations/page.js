@@ -11,9 +11,15 @@ export const GET_LOCATIONS = gql`query GetLocations {
   locations {
     id,
     name,
-    address
+    address,
+    status
   }
 }`
+
+const statuses = {
+  "processing": "bg-yellow-50 text-yellow-700",
+  "active": "bg-green-50 text-green-700"
+}
 
 export default function Locations() {
   const { data } = useSuspenseQuery(GET_LOCATIONS);
@@ -32,10 +38,17 @@ export default function Locations() {
     }))
   }
 
+  function onLocationUpdated(location) {
+    cache.updateQuery({ query: GET_LOCATIONS }, (data) => ({
+      locations: data.locations.map(loc => loc.id === location.id ? { ...loc, ...location } : loc)
+    }))
+  }
+
   useEffect(() => {
     socket.emit("subscribe", ["locations"]);
     socket.on("locationCreated", onLocationCreated)
     socket.on("locationRemoved", onLocationRemoved)
+    socket.on("locationUpdated", onLocationUpdated)
 
     return () => {
       socket.emit("unsubscribe", ["locations"])
@@ -49,8 +62,11 @@ export default function Locations() {
         <ul>
           {data.locations.map((location, i) => (
             <li key={i}>
-              <Link href={`/locations/${location.id}`} className={`block p-2 ${location.id == params.id ? "bg-slate-100" : "hover:bg-slate-100"} duration-200 rounded-md overflow-hidden`}>
-                <p><span className="font-medium">{location.name}</span> - <span className="text-gray-500 text-sm">{location.address}</span></p>
+              <Link href={`/locations/${location.id}`} className={`block p-2 ${location.id == params.id ? "bg-slate-100" : "hover:bg-slate-100"} duration-200 rounded-md overflow-hidden flex items-center justify-between`}>
+                <p>
+                  <span className="font-medium">{location.name}</span> - <span className="text-gray-500 text-sm">{location.address}</span>
+                </p>
+                <span className={`${statuses[location.status]} inline-flex items-center rounded-md p-1 text-sm font-medium ring-1 ring-inset ring-red-600/10`}>{location.status}</span>
               </Link>
             </li>
           ))}

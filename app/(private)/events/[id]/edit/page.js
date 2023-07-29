@@ -51,6 +51,7 @@ export default function EditEvent({ params }) {
   const [updateEvent, { loading: updating }] = useMutation(UPDATE_EVENT, {
     onCompleted: () => router.push("/events")
   })
+
   const [deleteEvent, { loading: deleting }] = useMutation(DELETE_EVENT, {
     update(cache, { data: { removeEvent } }) {
       cache.modify({
