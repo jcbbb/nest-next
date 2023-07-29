@@ -1,5 +1,6 @@
 "use client";
 
+import { useSocket } from "@/context/socket-context";
 import { gql } from "@apollo/client"
 import { useMutation } from "@apollo/client";
 import { useRouter } from "next/navigation"
@@ -14,6 +15,7 @@ const CREATE_LOCATION = gql`mutation CreateLocation($input: CreateLocationInput!
 
 export default function NewLocation() {
   const router = useRouter();
+  const { socket } = useSocket();
   const [createLocation, { loading }] = useMutation(CREATE_LOCATION, {
     update(cache, { data: { createLocation } }) {
       cache.modify({
@@ -24,7 +26,10 @@ export default function NewLocation() {
         }
       })
     },
-    onCompleted: () => router.push("/locations")
+    onCompleted: ({ createLocation }) => {
+      socket.emit("locationCreated", { topic: "locations", location: createLocation })
+      router.push("/locations")
+    }
   })
 
   function onNewLocation(e) {
