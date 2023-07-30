@@ -33,7 +33,9 @@ export default function SingleLocation({ params }) {
   const { socket, emitDeb } = useSocket();
   const { data } = useSuspenseQuery(GET_LOCATION, { variables: { id: Number(params.id) } })
   const [formState, setFormState] = useState({ name: data.location.name, address: data.location.address })
-  const [updateLocation, { loading }] = useMutation(UPDATE_LOCATION)
+  const [updateLocation, { loading }] = useMutation(UPDATE_LOCATION, {
+    onCompleted: ({ updateLocation }) => socket.emit("locationUpdated", { topic: "locations", update: updateLocation })
+  })
   const [deleteLocation] = useMutation(DELETE_LOCATION, {
     update(cache, { data: { removeLocation } }) {
       cache.modify({
