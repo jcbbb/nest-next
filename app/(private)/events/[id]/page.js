@@ -1,25 +1,7 @@
 "use client";
 import { useSuspenseQuery } from "@apollo/client";
-import { gql } from "@apollo/client"
 import { useEffect } from "react";
-
-const GET_EVENT = gql`query GetEvent($id: Int!) {
-  event (id: $id) {
-    start_at,
-    end_at,
-    participants {
-      id,
-      username
-    }
-  }
-}`
-
-const PARTICIPANTS_SUBSCRIPTION = gql`subscription OnParticipantAdded($id: Int!) {
-  participantAdded(event: $id) {
-    id,
-    username
-  }
-}`
+import { GET_EVENT, PARTICIPANTS_SUBSCRIPTION } from "../constants";
 
 export default function SingleEvent({ params }) {
   const { data, subscribeToMore } = useSuspenseQuery(GET_EVENT, { variables: { id: Number(params.id) } })

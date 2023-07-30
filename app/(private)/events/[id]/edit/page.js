@@ -4,36 +4,10 @@ import { useSuspenseQuery } from "@apollo/client"
 import { gql } from "@apollo/client"
 import { useRouter } from "next/navigation"
 import { toDatetimeLocal } from "@/utils/date";
+import { DELETE_EVENT, GET_LOCATIONS, UPDATE_EVENT } from "../../constants";
 
 const GET_EVENT = gql`query GetEvent($id: Int!) {
   event(id: $id) {
-    title,
-    description,
-    start_at,
-    end_at,
-    location {
-      id
-    }
-  }
-}`
-
-const GET_LOCATIONS = gql`query GetLocations {
-  locations {
-    name,
-    id,
-    address
-  }
-}`
-
-const DELETE_EVENT = gql`mutation RemoveEvent($id: Int!) {
-  removeEvent(id: $id) {
-    id
-  }
-}`
-
-const UPDATE_EVENT = gql`mutation UpdateEvent($input: UpdateEventInput!) {
-  updateEvent(updateEventInput: $input) {
-    id,
     title,
     description,
     start_at,

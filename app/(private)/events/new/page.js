@@ -2,25 +2,8 @@
 
 import { useMutation } from "@apollo/client"
 import { useSuspenseQuery } from "@apollo/client"
-import { gql } from "@apollo/client"
 import { useRouter } from "next/navigation"
-import { fromDatetimeLocal } from "@/utils/date";
-
-const GET_LOCATIONS = gql`query GetLocations {
-  locations {
-    name,
-    id,
-    address
-  }
-}`
-
-const CREATE_EVENT = gql`mutation CreateEvent($input: CreateEventInput!) {
-  createEvent(createEventInput: $input) {
-    id,
-    title,
-    description
-  }
-}`
+import { GET_LOCATIONS, CREATE_EVENT } from "../constants";
 
 export default function NewEvent() {
   const router = useRouter();

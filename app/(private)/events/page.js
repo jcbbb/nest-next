@@ -1,25 +1,7 @@
 "use client";
 import { useSuspenseQuery } from "@apollo/client";
-import { gql } from "@apollo/client"
 import Link from "next/link";
-import { useParams } from "next/navigation";
-
-const GET_EVENTS = gql`query GetEvents($input: FilterEventInput!) {
-  events(filterEventInput:$input) {
-    id,
-    title,
-    description
-  }
-}`
-
-const GET_LOCATIONS = gql`query GetLocations {
-  locations {
-    name,
-    id,
-    address
-  }
-}`
-
+import { GET_EVENTS, GET_LOCATIONS } from "./constants";
 
 export default function Events() {
   const { data, refetch } = useSuspenseQuery(GET_EVENTS, { variables: { input: {} } });
