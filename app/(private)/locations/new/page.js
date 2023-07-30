@@ -1,18 +1,9 @@
 "use client";
 
 import { useSocket } from "@/context/socket-context";
-import { gql } from "@apollo/client"
 import { useMutation } from "@apollo/client";
 import { useRouter } from "next/navigation"
-
-const CREATE_LOCATION = gql`mutation CreateLocation($input: CreateLocationInput!) {
-  createLocation(createLocationInput: $input) {
-    id,
-    name,
-    address,
-    status
-  }
-}`
+import { CREATE_LOCATION } from "../constants";
 
 export default function NewLocation() {
   const router = useRouter();

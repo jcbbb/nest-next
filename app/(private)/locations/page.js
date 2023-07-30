@@ -1,25 +1,11 @@
 "use client";
 import { useSuspenseQuery } from "@apollo/client";
-import { gql } from "@apollo/client"
 import { useParams } from "next/navigation";
 import { useEffect } from "react";
 import { cache } from "@/lib/apollo-provider";
 import { useSocket } from "@/context/socket-context";
 import Link from "next/link";
-
-export const GET_LOCATIONS = gql`query GetLocations {
-  locations {
-    id,
-    name,
-    address,
-    status
-  }
-}`
-
-const statuses = {
-  "processing": "bg-yellow-50 text-yellow-700",
-  "active": "bg-green-50 text-green-700"
-}
+import { GET_LOCATIONS, STATUSES } from "./constants";
 
 export default function Locations() {
   const { data } = useSuspenseQuery(GET_LOCATIONS);
@@ -66,7 +52,7 @@ export default function Locations() {
                 <p>
                   <span className="font-medium">{location.name}</span> - <span className="text-gray-500 text-sm">{location.address}</span>
                 </p>
-                <span className={`${statuses[location.status]} inline-flex items-center rounded-md p-1 text-sm font-medium ring-1 ring-inset ring-red-600/10`}>{location.status}</span>
+                <span className={`${STATUSES[location.status]} inline-flex items-center rounded-md p-1 text-sm font-medium ring-1 ring-inset ring-red-600/10`}>{location.status}</span>
               </Link>
             </li>
           ))}

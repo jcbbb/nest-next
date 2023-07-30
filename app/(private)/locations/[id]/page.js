@@ -2,31 +2,10 @@
 import { useSocket } from "@/context/socket-context"
 import { useMutation } from "@apollo/client"
 import { useSuspenseQuery } from "@apollo/client"
-import { gql } from "@apollo/client"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-
-const GET_LOCATION = gql`query GetLocation($id: Int!) {
-  location(id: $id) {
-    id,
-    name,
-    address
-  }
-}`
-
-const UPDATE_LOCATION = gql`mutation UpdateLocation($input: UpdateLocationInput!) {
-  updateLocation(updateLocationInput: $input) {
-    id,
-    name,
-    address
-  }
-}`
-
-const DELETE_LOCATION = gql`mutation RemoveLocation($id: Int!) {
-  removeLocation(id: $id) {
-    id
-  }
-}`
+import { GET_LOCATION, UPDATE_LOCATION, DELETE_LOCATION, GET_LOCATIONS } from "../constants";
+import { cache } from "@/lib/apollo-provider"
 
 export default function SingleLocation({ params }) {
   const router = useRouter();
@@ -36,6 +15,7 @@ export default function SingleLocation({ params }) {
   const [updateLocation, { loading }] = useMutation(UPDATE_LOCATION, {
     onCompleted: ({ updateLocation }) => socket.emit("locationUpdated", { topic: "locations", update: updateLocation })
   })
+
   const [deleteLocation] = useMutation(DELETE_LOCATION, {
     update(cache, { data: { removeLocation } }) {
       cache.modify({
@@ -90,7 +70,12 @@ export default function SingleLocation({ params }) {
   }
 
   function onLocationRemoved(id) {
-    if (id == params.id) router.push("/locations")
+    if (id == params.id) {
+      cache.updateQuery({ query: GET_LOCATIONS }, (data) => ({
+        locations: data.locations.filter(loc => loc.id !== id)
+      }));
+      router.push("/locations")
+    }
   }
 
   useEffect(() => {
